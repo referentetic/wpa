@@ -1,8 +1,9 @@
-// Instalación del service worker
+const CACHE_NAME = 'v2'; // Incrementa el número de versión cada vez que actualices los archivos
+
 self.addEventListener('install', (event) => {
     console.log('Service Worker: Instalado');
     event.waitUntil(
-        caches.open('v1').then((cache) => {
+        caches.open(CACHE_NAME).then((cache) => {
             return cache.addAll([
                 '/',
                 '/index.html',
@@ -15,22 +16,28 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Activación del service worker
+// Activación y limpieza de caché anterior
 self.addEventListener('activate', (event) => {
     console.log('Service Worker: Activado');
+    const cacheWhitelist = [CACHE_NAME];
+
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cacheName) => {
+                    if (!cacheWhitelist.includes(cacheName)) {
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
 });
 
-// Manejo de las solicitudes de red con caché inteligente
 self.addEventListener('fetch', (event) => {
-    console.log('Service Worker: Recuperando', event.request.url);
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            return cachedResponse || fetch(event.request).then((response) => {
-                return caches.open('v1').then((cache) => {
-                    cache.put(event.request, response.clone());
-                    return response;
-                });
-            });
+            return cachedResponse || fetch(event.request);
         })
     );
 });
