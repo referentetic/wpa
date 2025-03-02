@@ -1,48 +1,31 @@
-const CACHE_NAME = 'suma-pwa-cache-v1';
-const urlsToCache = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/app.js',
-    '/manifest.json',
-    '/icons/icon-192x192.png',
-    '/icons/icon-512x512.png'
-];
-
-// Instalación del service worker
+// Instalar el service worker
 self.addEventListener('install', (event) => {
+    console.log('Service Worker: Instalado');
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                return cache.addAll(urlsToCache);
-            })
-    );
-});
-
-// Activación del service worker
-self.addEventListener('activate', (event) => {
-    const cacheWhitelist = [CACHE_NAME];
-    event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (!cacheWhitelist.includes(cacheName)) {
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
+        caches.open('v1').then((cache) => {
+            return cache.addAll([
+                '/',
+                '/index.html',
+                '/app.js',
+                '/style.css',
+                '/icons/icon-192x192.png', // Asegúrate de tener los iconos disponibles en esta ruta
+                '/icons/icon-512x512.png'
+            ]);
         })
     );
 });
 
-// Recuperación de recursos desde el cache
+// Activar el service worker
+self.addEventListener('activate', (event) => {
+    console.log('Service Worker: Activado');
+});
+
+// Manejar las solicitudes de red
 self.addEventListener('fetch', (event) => {
+    console.log('Service Worker: Recuperando', event.request.url);
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {
-            if (cachedResponse) {
-                return cachedResponse;
-            }
-            return fetch(event.request);
+            return cachedResponse || fetch(event.request);
         })
     );
 });
