@@ -1,4 +1,4 @@
-// Instalar el service worker
+// Instalación del service worker
 self.addEventListener('install', (event) => {
     console.log('Service Worker: Instalado');
     event.waitUntil(
@@ -8,19 +8,19 @@ self.addEventListener('install', (event) => {
                 '/index.html',
                 '/app.js',
                 '/style.css',
-                '/icons/icon-192x192.png', // Asegúrate de tener los iconos disponibles en esta ruta
+                '/icons/icon-192x192.png',
                 '/icons/icon-512x512.png'
             ]);
         })
     );
 });
 
-// Activar el service worker
+// Activación del service worker
 self.addEventListener('activate', (event) => {
     console.log('Service Worker: Activado');
 });
 
-// Manejar las solicitudes de red
+// Manejo de las solicitudes de red (fetch)
 self.addEventListener('fetch', (event) => {
     console.log('Service Worker: Recuperando', event.request.url);
     event.respondWith(
