@@ -2,7 +2,7 @@
     "name": "Sumar dos números",
     "short_name": "Suma PWA",
     "description": "Una aplicación simple para sumar dos números.",
-    "start_url": "./",  // Usar ruta relativa
+    "start_url": "./", 
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#4CAF50",
